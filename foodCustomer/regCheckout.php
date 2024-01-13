@@ -1,31 +1,31 @@
-<?php 
-    session_start();
-?>
+<?php session_start();?>
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="./lucasStyle.css">
+        <link rel="stylesheet" href="../lucasStyle.css">
     </head>
     <body>
         <form action="<?php htmlspecialchars($_SERVER['PHP_SELF'])?>" method="POST">
             <table>
     <?php
                 $connectDB = mysqli_connect("localhost", "root", "", "web_project");
+                $user_id = $_SESSION['user_id'];
+                $kiosk_id = $_SESSION['kiosk_id'];
                 if(isset($_POST['pointsRedeemed'])) {
                     foreach ($_POST['specialInstruction'] as $foodId => $instruction) {
                         mysqli_query($connectDB, "UPDATE orders_item 
                                                     SET special_instructions = '$instruction' 
                                                     WHERE food_id = $foodId AND orders_id = (SELECT orders_id 
                                                                                                 FROM orders 
-                                                                                                WHERE user_id = 1 AND orders_status IS NULL)");
+                                                                                                WHERE user_id = '$user_id' AND orders_status IS NULL)");
                     }
                 }
-                $DBdata = mysqli_query($connectDB, "SELECT * FROM ((orders JOIN orders_item USING (orders_id)) JOIN food USING (food_id)) WHERE (user_id = 1 AND orders_status IS NULL)");
+                $DBdata = mysqli_query($connectDB, "SELECT * FROM ((orders JOIN orders_item USING (orders_id)) JOIN food USING (food_id)) WHERE (user_id = '$user_id' AND orders_status IS NULL)");
                 if(mysqli_num_rows($DBdata) > 0) {
                     while($row = mysqli_fetch_array($DBdata)) {    
     ?>
                         <tr>
-                            <td rowspan="2" class="resize_food_img_container"><img src="<?php echo $row['food_image']?>" alt="Menu"></td>
+                            <td rowspan="2" class="resize_food_img_container"><img src="../images/menu/<?php echo $row['food_image']?>" alt="Menu"></td>
                             <td class="resize_food_name_container2"><?php echo $row['food_name']?></td>
                             <td class="resize_item_quantity_container">x <?php echo $row['item_quantity']?></td>
                         </tr>
@@ -43,8 +43,8 @@
             <br>
             <div class="payment_info_container">
     <?php
-                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_or_general_user JOIN registered_user USING(user_id) WHERE user_id = 1"));
-                $vendorInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM food_vendor WHERE vendor_id = (SELECT vendor_id FROM kiosk WHERE kiosk_name = 'Kiosk1')"));
+                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_or_general_user JOIN registered_user USING(user_id) WHERE user_id = '$user_id'"));
+                $vendorInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM food_vendor WHERE vendor_id = (SELECT vendor_id FROM kiosk WHERE kiosk_id = '$kiosk_id')"));
     ?>
                 <table class="align_table1">
                     <tr><td><b>Your info:</b></td></tr>
@@ -65,7 +65,7 @@
                         <td>Subtotal</td>
                         <td>
     <?php 
-                            $row = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM orders WHERE user_id = 1 AND orders_status IS NULL"));
+                            $row = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM orders WHERE user_id = '$user_id' AND orders_status IS NULL"));
                             echo "RM {$row['orders_subtotal']}";
                             $_SESSION['subtotal'] = $row['orders_subtotal'];
     ?>    
@@ -80,7 +80,7 @@
                                 echo '0 point';
                             } else {
                                 $pointsRedeemed = $_POST['pointsRedeemed'];
-                                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_user WHERE user_id = 1"));
+                                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_user WHERE user_id = '$user_id'"));
                                 if($pointsRedeemed <= $userInfoRow['registered_points']) {
                                     echo "{$pointsRedeemed} points";
                                     $_SESSION['pointsRedeemed'] = $pointsRedeemed;
@@ -97,7 +97,7 @@
                                 echo "RM {$row['orders_subtotal']}";
                             } else {
                                 $pointsRedeemed = $_POST['pointsRedeemed'];
-                                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_user WHERE user_id = 1"));
+                                $userInfoRow = mysqli_fetch_array(mysqli_query($connectDB, "SELECT * FROM registered_user WHERE user_id = '$user_id'"));
                                 if($pointsRedeemed <= $userInfoRow['registered_points']) {
                                     echo 'RM ' . ($row['orders_subtotal'] - (int)$pointsRedeemed);
                                 }
@@ -125,7 +125,7 @@
                 </table>
             </div>
             <br>
-            <button type="submit" class="checkout_button" name="placeOrder" formaction="<?php echo htmlspecialchars('./processing.php')?>" formmethod="POST">Place Order</button>
+            <button type="submit" class="checkout_button" name="placeOrder" formaction="<?php echo htmlspecialchars('../processing.php')?>" formmethod="POST">Place Order</button>
         </form>
     </body>
 </html>

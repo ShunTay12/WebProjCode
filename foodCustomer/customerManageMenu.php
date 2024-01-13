@@ -4,20 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiosk1 Add Delete Menu</title>
+    <link rel="stylesheet" href="../lucasStyle.css">
    
     
 </head>
 <body>
     <?php include('../partials/customerMenuBar.php'); ?>
+    <!--  -->
+    <!--  -->
+    <!--  -->
+    <?php 
+        if(!isset($_SESSION['kiosk_id'])) {
+            $_SESSION['kiosk_id'] = $_GET['kiosk_id'];
+        }
+    ?>
+    <!--  -->
+    <!--  -->
+    <!--  -->
     <?php
         if(isset($_GET['kiosk_id'])) {
 
             $kioskId = $_GET['kiosk_id'];
-            $result = mysqli_query($conn, "SELECT COUNT(*) AS count FROM food WHERE kiosk_id= $kioskId");
+            $result = mysqli_query($conn, "SELECT COUNT(*) AS count FROM food WHERE kiosk_id= '$kioskId'");
             $row = mysqli_fetch_assoc($result);
             $rows = $row['count'];  
             
-            $sql2 = "SELECT * FROM kiosk WHERE kiosk_id= $kioskId";
+            $sql2 = "SELECT * FROM kiosk WHERE kiosk_id= '$kioskId'";
             $run2 = mysqli_query($conn, $sql2);
             $count2 = mysqli_num_rows($run2);
 
@@ -173,7 +185,7 @@
             ?>
             
 
-            <form class="all <?php echo $foodCategory;?>" action="delete_food.php" method="GET">
+            <form class="all <?php echo $foodCategory;?>" action="../processing.php" method="POST">
                 <div class="col">
                     <div class="card mb-3 shadow transition">
                         <div class="container mt-3 mx-1">                     
@@ -220,7 +232,7 @@
                                     <div class="row justify-content-end" style="padding-left: 6px; padding-right: 12px;">
                                         <div class="col-6"></div>
                                         <div class="col-3 offset-2 btn-group">
-                                            <button class="btn search-btn transition" type="submit">
+                                            <button class="btn search-btn transition" type="submit" name="addFoodtoBasket" value="<?php echo $foodId;?>">
                                                 <i class="fa-solid fa-plus"></i>
                                             </button>
                                         </div>
@@ -253,8 +265,18 @@
         </div>
     </div>
     
-    
-    
+
+
+<?php
+    if($rows != 0) {
+?>
+        <br><br><br>
+        <form>
+            <button type="submit" class="checkout_button" formaction="<?php echo htmlspecialchars('./basket.php')?>">View Basket</button>
+        </form>
+<?php
+    }
+?>
 
 
 

@@ -13,7 +13,12 @@
         // if(isset($_GET['kiosk_id'])) {
 
             // $kioskId = $_GET['kiosk_id'];
-            $kioskId = 1;
+            ///////////////////////////////////////////////////
+            $vendor_id = $_SESSION['vendor_id'];
+            $kioskIdQuery = mysqli_query($conn, "SELECT kiosk_id FROM kiosk WHERE vendor_id = '$vendor_id'");
+            $kisokIdRs = mysqli_fetch_array($kioskIdQuery);
+            $kioskId = $kisokIdRs['kiosk_id'];
+            ///////////////////////////////////////////////////
             $result = mysqli_query($conn, "SELECT COUNT(*) AS count FROM food WHERE kiosk_id= $kioskId");
             $row = mysqli_fetch_assoc($result);
             $rows = $row['count'];  

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kiosk1 Add Delete Menu</title>
+    <link rel="stylesheet" href="../lucasStyle.css">
 
     
 </head>
@@ -146,9 +147,9 @@
                                             <div class="row">
                                                 <div class="col-6"></div>
                                                 <div class="col-3 offset-2 btn-group">
-                                                    <button class="btn search-btn transition" type="submit">
+                                                    <button class="btn search-btn transition" type="submit" name="addFoodtoBasket" value="<?php echo $foodId;?>" formaction="../processing.php" formmethod="POST">
                                                         <i class="fa-solid fa-plus"></i>
-                                                    </button>     
+                                                    </button>  
                                                 </div>
                                             </div>
                                         </div>
@@ -181,6 +182,12 @@
     </div>
     
     
+    <br><br><br>
+    <form>
+        <button type="submit" class="checkout_button" formaction="<?php echo htmlspecialchars('./basket.php')?>">View Basket</button>
+    </form>
+
+
     
     <?php include('../partials/footer.php'); ?>
 
